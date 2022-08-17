@@ -1,27 +1,80 @@
 import express, {Request, Response} from 'express';
 import Post from "../models/modelPost";
 
+//geçici data
+const handleaddpost = {
+    "title": "deneme2",
+    "subtitle": "denemesub2",
+    "content": "bu bir denemedir2",
+    "tag": "denemetag2",
+    "image": "denemeimg2",
+}
 
-const getPost = async (req: Request, res: Response) => {
+const getPosts = async (req: Request, res: Response) => {
     try {
         const posts = await Post.find();
         res.status(200).json(posts);
     } catch (error) {
         res.status(400).json({
-            message: error,
+            message: "Bir hata oluştu",
         })
+    }
+}
+
+const getPost =async (req: Request, res: Response) => {
+    const id = req.params.id;
+    try {
+        const post = await Post.findById(id);
+        res.status(200).json(post);
+    } catch (error) {
+        res.status(400).json({
+            message: "Bir hata oluştu",
+        })
+    }
+}
+
+
+const deletePost = async ( req: Request, res: Response ) => {
+    const id = req.params.id;
+    try {
+        const deletePost = await Post.findByIdAndDelete(id);
+        res.send(deletePost);
+    } catch (error) {
+        res.status(400).json({
+            message: "Bir hata oluştu",
+        })
+    }
+}
+
+const updatePost =async (req: Request, res: Response) => {
+    try {
+       const updatedPost = await Post.updateOne({_id: req.params.id}, { $set: {
+            title: req.body.title,
+            subtitle: req.body.subtitle,
+            content: req.body.content,
+            tag: req.body.tag,
+            image: req.body.image,
+            createdAt: new Date(),
+       }});
+       res.json(updatedPost);
+    } catch (error) {
+        res.status(400).json({
+            message: "Bir hata oluştu",
+        })
+        console.log(error)
     }
 }
 
 const addPost = async (req: Request, res: Response) => {
     const newPost = new Post(req.body);
+    // const newPost = new Post(handleaddpost);
     try {
         await newPost.save();
     } catch (error) {
-        res.status(409).json({
-            message: error,
+        res.status(400).json({
+            message: "Bir hata oluştu",
         })
     }
 }
 
-export default {getPost, addPost};
+export default {getPosts, getPost, addPost, deletePost, updatePost};
