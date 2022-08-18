@@ -1,14 +1,6 @@
 import express, {Request, Response} from 'express';
 import Post from "../models/modelPost";
 
-//geçici data
-const handleaddpost = {
-    "title": "deneme2",
-    "subtitle": "denemesub2",
-    "content": "bu bir denemedir2",
-    "tag": "denemetag2",
-    "image": "denemeimg2",
-}
 
 const getPosts = async (req: Request, res: Response) => {
     try {
@@ -46,7 +38,7 @@ const deletePost = async ( req: Request, res: Response ) => {
     }
 }
 
-const updatePost =async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response) => {
     try {
        const updatedPost = await Post.updateOne({_id: req.params.id}, { $set: {
             title: req.body.title,
@@ -67,7 +59,6 @@ const updatePost =async (req: Request, res: Response) => {
 
 const addPost = async (req: Request, res: Response) => {
     const newPost = new Post(req.body);
-    // const newPost = new Post(handleaddpost);
     try {
         await newPost.save();
     } catch (error) {
